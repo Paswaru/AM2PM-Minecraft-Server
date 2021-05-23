@@ -1,0 +1,37 @@
+# TODO:
+#    Add support for Regions
+#    Check for a more flat area, teleports sometimes on the side of a hill or mountant
+options:
+	MaxRange: 100000
+	MaxAttempts: 10
+	BlockedBiomes: cold ocean, deep cold ocean, deep frozen ocean, deep lukewarm ocean, deep ocean, deep warm ocean, frozen ocean, frozen ocean, lukewarm ocean, ocean, river, warm ocean
+	BlockedBlocks: cactus, fire, lava, magma block, air, void air, cave air
+							
+on first join:
+	set {_BlockedBiomes::*} to split "{@BlockedBiomes}" at ", "
+	set {_BlockedBlocks::*} to split "{@BlockedBlocks}" at ", "
+	loop {@MaxAttempts} times:
+		set {_x.cord} to a random integer between (({@MaxRange} / 2) * -1) to ({@MaxRange} / 2)
+		set {_y.cord} to a random integer between 64 to 200
+		set {_z.cord} to a random integer between (({@MaxRange} / 2) * -1) to ({@MaxRange} / 2)
+		set {_Location} to location({_x.cord}, {_y.cord}, {_z.cord}, world("world"))
+		
+		set {_Biome} to biome at {_Location}
+		if {_BlockedBiomes::*} does not contain "%{_Biome}%":
+			while block at {_Location} is air:
+				remove 1 from {_Location}'s y-coordinate
+			set {_Block} to block at {_Location}
+			if {_BlockedBlocks::*} does not contain "%{_Block}%":
+				if block above {_Block} is air:
+					if block 2 above {_Block} is air:
+						add 1 to {_Location}'s y-coordinate
+						apply potion of blindness to the player for 5 seconds
+						apply potion of confusion to the player for 10 seconds
+						set {spawn::%player's uuid%} to {_Location}
+						teleport player to {_Location}
+						stop
+
+on respawn:
+	if bed of player does not exist:
+		if {spawn::%player's uuid%} is set:
+			teleport player to {spawn::%player's uuid%}
