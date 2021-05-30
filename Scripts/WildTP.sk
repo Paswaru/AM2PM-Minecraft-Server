@@ -1,9 +1,11 @@
 # TODO:
-#    Add support for Regions
-#    Check for a more flat area, teleports sometimes on the side of a hill or mountant
+#   Check for a more flat area, teleports sometimes on the side of a hill or mountant
+#	Verify spawn is still safe before teleporting
+
 options:
 	MaxRange: 100000
 	MaxAttempts: 10
+	PlayerSperation: 100
 	BlockedBiomes: cold ocean, deep cold ocean, deep frozen ocean, deep lukewarm ocean, deep ocean, deep warm ocean, frozen ocean, frozen ocean, lukewarm ocean, ocean, river, warm ocean
 	BlockedBlocks: cactus, fire, lava, magma block, air, void air, cave air
 							
@@ -18,18 +20,22 @@ on first join:
 		
 		set {_Biome} to biome at {_Location}
 		if {_BlockedBiomes::*} does not contain "%{_Biome}%":
-			while block at {_Location} is air:
-				remove 1 from {_Location}'s y-coordinate
-			set {_Block} to block at {_Location}
-			if {_BlockedBlocks::*} does not contain "%{_Block}%":
-				if block above {_Block} is air:
-					if block 2 above {_Block} is air:
-						add 1 to {_Location}'s y-coordinate
-						apply potion of blindness to the player for 5 seconds
-						apply potion of confusion to the player for 10 seconds
-						set {spawn::%player's uuid%} to {_Location}
-						teleport player to {_Location}
-						stop
+			set {_regions::*} to regions at {_Location}
+			if {_regions::*} is not set:
+				set {_players::*} to players in radius {@PlayerSperation} of player
+				if {_players::*} is not set:
+					while block at {_Location} is air:
+						remove 1 from {_Location}'s y-coordinate
+					set {_Block} to block at {_Location}
+					if {_BlockedBlocks::*} does not contain "%{_Block}%":
+						if block above {_Block} is air:
+							if block 2 above {_Block} is air:
+								add 1 to {_Location}'s y-coordinate
+								apply potion of blindness to the player for 5 seconds
+								apply potion of confusion to the player for 10 seconds
+								set {spawn::%player's uuid%} to {_Location}
+								teleport player to {_Location}
+								stop
 
 on respawn:
 	if bed of player does not exist:
