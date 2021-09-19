@@ -7,7 +7,7 @@ options:
 	MaxAttempts: 10
 	PlayerSperation: 100
 	BlockedBiomes: cold ocean, deep cold ocean, deep frozen ocean, deep lukewarm ocean, deep ocean, deep warm ocean, frozen ocean, frozen ocean, lukewarm ocean, ocean, river, warm ocean
-	BlockedBlocks: cactus, fire, lava, magma block, air, void air, cave air
+	BlockedBlocks: cactus, fire, lava, magma block, air, void air, cave air, tnt
 							
 on first join:
 	set {_BlockedBiomes::*} to split "{@BlockedBiomes}" at ", "
@@ -16,7 +16,7 @@ on first join:
 		set {_x.cord} to a random integer between (({@MaxRange} / 2) * -1) to ({@MaxRange} / 2)
 		set {_y.cord} to a random integer between 64 to 200
 		set {_z.cord} to a random integer between (({@MaxRange} / 2) * -1) to ({@MaxRange} / 2)
-		set {_Location} to location({_x.cord}, {_y.cord}, {_z.cord}, world("world"))
+		set {_Location} to location({_x.cord}, {_y.cord}, {_z.cord}, world)
 		
 		set {_Biome} to biome at {_Location}
 		if {_BlockedBiomes::*} does not contain "%{_Biome}%":
